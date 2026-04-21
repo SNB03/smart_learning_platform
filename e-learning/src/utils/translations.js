@@ -1,0 +1,121 @@
+export const translations = {
+  en: {
+    adminTitle: "Admin Dashboard",
+    overview: "Overview",
+    addTeacher: "Add Teacher",
+    teacherInfo: "Teacher Directory",
+    studentStats: "Student Stats",
+    announcements: "Notices",
+    logout: "Logout",
+
+    // Add Teacher Tab
+    manualEntry: "Manual Entry",
+    bulkUpload: "Bulk Upload",
+    fullName: "Full Name",
+    mobile: "Mobile Number",
+    email: "Email Address",
+    role: "Teacher Role",
+    classTeacher: "Class Teacher",
+    subjectTeacher: "Subject Teacher",
+    selectClasses: "Assign Classes",
+    selectDivisions: "Assign Divisions",
+    subjects: "Subjects Taught",
+    generateBtn: "Save & Generate Credentials",
+    uploadDesc: "Upload a CSV file containing teacher details.",
+    downloadTemplate: "Download CSV Template",
+
+    // Teacher Directory
+    searchTeacher: "Search by name or subject...",
+    filterRole: "All Roles",
+    status: "Status",
+    actions: "Actions",
+    active: "Active",
+    inactive: "Inactive",
+
+    // Student Stats
+    classLabel: "Class",
+    divisionLabel: "Division",
+    boys: "Boys",
+    girls: "Girls",
+    total: "Total",
+    classTeacherLabel: "Class Teacher"
+  },
+
+  mr: {
+    adminTitle: "ॲडमिन डॅशबोर्ड",
+    overview: "विहंगावलोकन",
+    addTeacher: "शिक्षक जोडा",
+    teacherInfo: "शिक्षक माहिती",
+    studentStats: "विद्यार्थी आकडेवारी",
+    announcements: "सूचना",
+    logout: "लॉग आउट",
+
+    manualEntry: "स्वतः माहिती भरा",
+    bulkUpload: "एकत्रित अपलोड करा",
+    fullName: "पूर्ण नाव",
+    mobile: "मोबाईल नंबर",
+    email: "ईमेल पत्ता",
+    role: "शिक्षकाची भूमिका",
+    classTeacher: "वर्गशिक्षक",
+    subjectTeacher: "विषय शिक्षक",
+    selectClasses: "वर्ग निवडा",
+    selectDivisions: "तुकडी निवडा",
+    subjects: "शिकवले जाणारे विषय",
+    generateBtn: "पासवर्ड तयार करा आणि सेव्ह करा",
+    uploadDesc: "शिक्षकांची माहिती असलेली CSV फाईल अपलोड करा.",
+    downloadTemplate: "CSV टेम्प्लेट डाउनलोड करा",
+
+    searchTeacher: "नाव किंवा विषयानुसार शोधा...",
+    filterRole: "सर्व भूमिका",
+    status: "स्थिती",
+    actions: "कृती",
+    active: "सक्रिय",
+    inactive: "निष्क्रिय",
+
+    classLabel: "वर्ग",
+    divisionLabel: "तुकडी",
+    boys: "मुले",
+    girls: "मुली",
+    total: "एकूण",
+    classTeacherLabel: "वर्गशिक्षक"
+  },
+
+  hi: {
+    adminTitle: "एडमिन डैशबोर्ड",
+    overview: "अवलोकन",
+    addTeacher: "शिक्षक जोड़ें",
+    teacherInfo: "शिक्षक निर्देशिका",
+    studentStats: "छात्र आंकड़े",
+    announcements: "नोटिस",
+    logout: "लॉग आउट",
+
+    manualEntry: "मैन्युअल प्रविष्टि",
+    bulkUpload: "एक साथ अपलोड",
+    fullName: "पूरा नाम",
+    mobile: "मोबाइल नंबर",
+    email: "ईमेल पता",
+    role: "शिक्षक की भूमिका",
+    classTeacher: "कक्षा शिक्षक",
+    subjectTeacher: "विषय शिक्षक",
+    selectClasses: "कक्षाएं चुनें",
+    selectDivisions: "सेक्शन चुनें",
+    subjects: "पढ़ाए जाने वाले विषय",
+    generateBtn: "पासवर्ड बनाएं और सेव करें",
+    uploadDesc: "शिक्षकों की जानकारी वाली CSV फ़ाइल अपलोड करें।",
+    downloadTemplate: "CSV टेम्पलेट डाउनलोड करें",
+
+    searchTeacher: "नाम या विषय से खोजें...",
+    filterRole: "सभी भूमिकाएँ",
+    status: "स्थिति",
+    actions: "कार्रवाई",
+    active: "सक्रिय",
+    inactive: "निष्क्रिय",
+
+    classLabel: "कक्षा",
+    divisionLabel: "सेक्शन",
+    boys: "लड़के",
+    girls: "लड़कियां",
+    total: "कुल",
+    classTeacherLabel: "कक्षा शिक्षक"
+  }
+};
