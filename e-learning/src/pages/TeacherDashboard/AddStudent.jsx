@@ -3,52 +3,71 @@ import { useOutletContext } from 'react-router-dom';
 import { UserPlus, Loader2, CheckCircle2, XCircle, Users, UploadCloud, FileText, FileSpreadsheet } from 'lucide-react';
 
 const AddStudent = () => {
-  const { isClassTeacher } = useOutletContext();
+ const { user, isClassTeacher } = useOutletContext();
+   const [entryMode, setEntryMode] = useState('manual');
+   const [isSubmitting, setIsSubmitting] = useState(false);
+   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+   const [selectedFile, setSelectedFile] = useState(null);
 
-  // App State
-  const [entryMode, setEntryMode] = useState('manual'); // 'manual' or 'bulk'
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+   const [formData, setFormData] = useState({
+     fullName: '', rollNo: '', email: '', parentMobileNo: '', gender: 'Boy'
+   });
 
-  // Manual Entry State
-  const [formData, setFormData] = useState({
-    fullName: '', rollNo: '', email: '', parentMobileNo: '', gender: 'Boy'
-  });
+   // Get teacher's class assignment
+   const myClass = user?.assignments?.find(a => a.assignmentRole === 'class');
 
-  // Bulk Upload State
-  const [selectedFile, setSelectedFile] = useState(null);
+   useEffect(() => {
+     if (toast.show) {
+       const timer = setTimeout(() => setToast({ ...toast, show: false }), 4000);
+       return () => clearTimeout(timer);
+     }
+   }, [toast.show]);
 
-  // Auto-hide toast
-  useEffect(() => {
-    if (toast.show) {
-      const timer = setTimeout(() => setToast({ ...toast, show: false }), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [toast.show]);
+   if (!isClassTeacher || !myClass) {
+     return (
+       <div className="flex flex-col items-center justify-center h-96 text-gray-400">
+         <Users className="w-16 h-16 mb-4 opacity-50" />
+         <p className="font-bold text-lg text-gray-600">Access Denied</p>
+       </div>
+     );
+   }
 
-  if (!isClassTeacher) {
-    return (
-      <div className="flex flex-col items-center justify-center h-96 text-gray-400">
-        <Users className="w-16 h-16 mb-4 opacity-50" />
-        <p className="font-bold text-lg text-gray-600">Access Denied</p>
-      </div>
-    );
-  }
+   const showToast = (message, type = 'success') => setToast({ show: true, message, type });
 
-  const showToast = (message, type = 'success') => setToast({ show: true, message, type });
+   // --- MANUAL ENTRY API CALL ---
+   const handleManualSubmit = async (e) => {
+     e.preventDefault();
+     setIsSubmitting(true);
 
-  // --- MANUAL SUBMIT (MOCK) ---
-  const handleManualSubmit = (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+     const payload = {
+       ...formData,
+       classLevel: myClass.classLevel,
+       division: myClass.division,
+       mobileNo: formData.parentMobileNo // Login credential
+     };
 
-    setTimeout(() => {
-      showToast(`Successfully added ${formData.fullName} to roster!`, 'success');
-      setFormData({ fullName: '', rollNo: '', email: '', parentMobileNo: '', gender: 'Boy' });
-      setIsSubmitting(false);
-    }, 1000);
-  };
+     try {
+       const response = await fetch('http://localhost:8080/api/teacher/students', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify(payload)
+       });
 
+       if (response.ok) {
+         const savedStudent = await response.json();
+         // Crucial: Show the teacher the generated password so they can tell the student!
+         showToast(`Success! Login Password: ${savedStudent.passwordHash}`, 'success');
+         setFormData({ fullName: '', rollNo: '', email: '', parentMobileNo: '', gender: 'Boy' });
+       } else {
+         const errText = await response.text();
+         showToast(errText || "Failed to add student.", "error");
+       }
+     } catch (error) {
+       showToast("Network error.", "error");
+     } finally {
+       setIsSubmitting(false);
+     }
+   };
   // --- BULK UPLOAD SUBMIT (MOCK) ---
   const handleBulkSubmit = (e) => {
     e.preventDefault();
@@ -82,25 +101,24 @@ const AddStudent = () => {
   };
 
   return (
-    <div className="animate-fade-in pb-20 max-w-2xl mx-auto relative">
+   <div className="animate-fade-in pb-20 max-w-2xl mx-auto relative">
+         {/* Toast Notification */}
+         <div className={`fixed top-4 right-4 z-[100] transition-all duration-300 transform ${toast.show ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0 pointer-events-none'}`}>
+           <div className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border-l-4 ${toast.type === 'success' ? 'bg-emerald-50 border-emerald-500 text-emerald-800' : 'bg-red-50 border-red-500 text-red-800'}`}>
+             {toast.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <XCircle className="w-5 h-5 text-red-500" />}
+             <p className="font-bold text-sm">{toast.message}</p>
+           </div>
+         </div>
 
-      {/* Toast Notification */}
-      <div className={`fixed top-4 right-4 z-[100] transition-all duration-300 transform ${toast.show ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0 pointer-events-none'}`}>
-        <div className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border-l-4 ${toast.type === 'success' ? 'bg-emerald-50 border-emerald-500 text-emerald-800' : 'bg-red-50 border-red-500 text-red-800'}`}>
-          {toast.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <XCircle className="w-5 h-5 text-red-500" />}
-          <p className="font-bold text-sm">{toast.message}</p>
-        </div>
-      </div>
-
-      {/* Header */}
-      <div className="mb-6 px-2 sm:px-0">
-        <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-          <UserPlus className="w-6 h-6 text-amber-500" /> Register Students
-        </h2>
-        <p className="text-sm font-medium text-gray-500 mt-1">
-          Add students to your primary class roster. They will automatically be assigned their login credentials.
-        </p>
-      </div>
+         {/* Header */}
+         <div className="mb-6 px-2 sm:px-0">
+           <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
+             <UserPlus className="w-6 h-6 text-amber-500" /> Register Students
+           </h2>
+           <p className="text-sm font-medium text-gray-500 mt-1">
+             Adding to Class {myClass.classLevel} - Div {myClass.division}. They will automatically get login access.
+           </p>
+         </div>
 
       {/* Mode Toggle Switch */}
       <div className="flex bg-gray-200/50 p-1 rounded-2xl mb-6 mx-2 sm:mx-0">

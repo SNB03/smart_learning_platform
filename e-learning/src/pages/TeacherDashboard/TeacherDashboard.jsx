@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { BookOpen, LogOut, Menu, X, LayoutDashboard, Users, Bell, FileText, UserCircle, Settings2,UserPlus } from 'lucide-react';
+import { BrainCircuit,BookOpen, LogOut, Menu, X, LayoutDashboard, Users, Bell, FileText, UserCircle, UserPlus } from 'lucide-react';
 
 const TeacherDashboard = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -8,23 +8,31 @@ const TeacherDashboard = () => {
   const location = useLocation();
 
   // =======================================================================
-  // 🛠️ MOCK UI STATE (No backend needed right now)
-  // Toggle this true/false to see how the UI changes for different teachers!
+  // 🔐 REAL AUTHENTICATION LOGIC
   // =======================================================================
-  const [isClassTeacher, setIsClassTeacher] = useState(true);
+  // 1. Grab the user from localStorage (set by Login.jsx)
+  const userString = localStorage.getItem('user');
+  const user = userString ? JSON.parse(userString) : null;
 
-  const mockUser = {
-      id: 1,
-    fullName: "Rahul Sharma",
-    role: "TEACHER",
-    teacherType: isClassTeacher ? 'class' : 'subject',
-  };
-  // =======================================================================
+  // 2. Protect the Route: Kick them to login if they aren't a Teacher
+  useEffect(() => {
+    if (!user || user.role !== 'TEACHER') {
+      navigate('/login');
+    }
+  }, [user, navigate]);
 
+  // 3. Prevent rendering the dashboard until the redirect happens
+  if (!user) return null;
+
+  // 4. Check if they are a Class Teacher based on the database value
+  const isClassTeacher = user.teacherType === 'class';
+
+  // 5. Real Logout Function
   const handleLogout = () => {
-    alert("UI Mockup: Logout button clicked!");
-    // navigate('/login');
+    localStorage.removeItem('user'); // Clear the session
+    navigate('/login');              // Send them back to the login page
   };
+  // =======================================================================
 
   // Upgraded Tab styling with a sleek left-border highlight for the active state
   const getTabClass = (path) => {
@@ -38,20 +46,6 @@ const TeacherDashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans flex flex-col selection:bg-blue-200">
-
-      {/* --- UI DEV TOGGLE (Remove in Production) --- */}
-      <div className="bg-amber-100 text-amber-800 text-xs font-bold py-2 px-4 flex justify-center items-center gap-4 border-b border-amber-200 z-50">
-        <span className="flex items-center gap-1"><Settings2 className="w-4 h-4"/> UI DEV MODE:</span>
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={isClassTeacher}
-            onChange={(e) => setIsClassTeacher(e.target.checked)}
-            className="w-4 h-4 accent-amber-600 rounded cursor-pointer"
-          />
-          Toggle 'Class Teacher' Privileges
-        </label>
-      </div>
 
       {/* --- Top Navbar --- */}
       <nav className="bg-blue-900 text-white shadow-md sticky top-0 z-40">
@@ -67,11 +61,11 @@ const TeacherDashboard = () => {
 
           {/* Right Actions */}
           <div className="flex items-center gap-3 sm:gap-4">
-             {/* Name Tag (Desktop/Tablet) */}
+             {/* Dynamic Name Tag from Database */}
             <div className="hidden sm:flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg border border-blue-700 shadow-inner">
               <UserCircle className="w-4 h-4 text-blue-300 flex-shrink-0" />
               <span className="font-bold text-white text-sm truncate">
-                {mockUser.fullName.split(' ')[0]}
+                {user.fullName.split(' ')[0]}
                 <span className="text-blue-300 font-medium text-xs ml-1.5 px-1.5 py-0.5 bg-blue-900/50 rounded">
                   {isClassTeacher ? 'Class Tr.' : 'Subject Tr.'}
                 </span>
@@ -96,7 +90,7 @@ const TeacherDashboard = () => {
       {/* --- Main Layout --- */}
       <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col md:flex-row py-4 sm:py-6 px-4 sm:px-6 lg:px-8 gap-6">
 
-        {/* Desktop Sidebar (Hidden on Mobile) */}
+        {/* Desktop Sidebar */}
         <aside className="hidden md:block w-64 flex-shrink-0">
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 flex flex-col gap-1.5 sticky top-24">
 
@@ -113,18 +107,17 @@ const TeacherDashboard = () => {
               <div className="mt-4 animate-fade-in">
                 <div className="mb-2 px-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Class Admin</div>
                 <div className="space-y-1.5">
-                  <NavLink to="/teacher-dashboard/manage-students" className={getTabClass('manage-students')}>
-                    <Users className="w-5 h-5 text-amber-500" /> Manage Students
+                  <NavLink to="/teacher-dashboard/class-roster" className={getTabClass('class-roster')}>
+                    <Users className="w-5 h-5 text-amber-500" /> Class Roster
                   </NavLink>
-                  {/* NEW: Split into two separate tabs */}
-                                    <NavLink to="/teacher-dashboard/class-roster" className={getTabClass('class-roster')} onClick={() => setIsMobileMenuOpen(false)}>
-                                      <Users className="w-5 h-5 text-amber-500" /> Class Roster
-                                    </NavLink>
-                                    <NavLink to="/teacher-dashboard/add-student" className={getTabClass('add-student')} onClick={() => setIsMobileMenuOpen(false)}>
-                                      <UserPlus className="w-5 h-5 text-amber-500" /> Add Student
-                                    </NavLink>
+                  <NavLink to="/teacher-dashboard/add-student" className={getTabClass('add-student')}>
+                    <UserPlus className="w-5 h-5 text-amber-500" /> Add Student
+                  </NavLink>
                   <NavLink to="/teacher-dashboard/class-notices" className={getTabClass('class-notices')}>
                     <Bell className="w-5 h-5 text-amber-500" /> Class Notices
+                  </NavLink>
+                  <NavLink to="/teacher-dashboard/quizzes" className={getTabClass('quizzes')} onClick={() => setIsMobileMenuOpen(false)}>
+                    <BrainCircuit className="w-5 h-5" /> Quiz Manager
                   </NavLink>
                 </div>
               </div>
@@ -132,10 +125,10 @@ const TeacherDashboard = () => {
           </div>
         </aside>
 
-        {/* Dynamic Content Area (The actual pages load here) */}
+        {/* Dynamic Content Area */}
         <main className="flex-1 w-full min-w-0">
-          {/* For UI testing, we pass down the mock user */}
-          <Outlet context={{ user: mockUser, isClassTeacher }} />
+          {/* We pass down the REAL user to all child pages! */}
+          <Outlet context={{ user, isClassTeacher }} />
         </main>
       </div>
 
@@ -152,13 +145,12 @@ const TeacherDashboard = () => {
 
             {/* User Profile Header */}
             <div className="bg-gradient-to-b from-blue-600 to-blue-700 p-6 flex flex-col items-start text-white relative overflow-hidden">
-              {/* Decorative circle */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/4"></div>
 
               <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-4 border border-white/30 backdrop-blur-sm">
                 <UserCircle className="w-8 h-8 text-white" />
               </div>
-              <span className="font-black text-xl tracking-tight">{mockUser.fullName}</span>
+              <span className="font-black text-xl tracking-tight">{user.fullName}</span>
               <span className="mt-1 text-xs font-bold bg-white/20 text-white px-2.5 py-1 rounded-full border border-white/20 uppercase tracking-wider">
                 {isClassTeacher ? 'Primary Class Teacher' : 'Subject Teacher'}
               </span>
@@ -168,7 +160,7 @@ const TeacherDashboard = () => {
               </button>
             </div>
 
-            {/* Navigation Links (Extra large padding for thumbs) */}
+            {/* Navigation Links */}
             <div className="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-2">
               <NavLink to="/teacher-dashboard" end onClick={() => setIsMobileMenuOpen(false)} className={getTabClass('')}>
                 <LayoutDashboard className="w-5 h-5" /> Daily Schedule
@@ -181,18 +173,17 @@ const TeacherDashboard = () => {
                 <div className="mt-6 animate-fade-in">
                   <div className="mb-3 px-4 text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2">Class Admin</div>
                   <div className="space-y-2">
-                    <NavLink to="/teacher-dashboard/manage-students" onClick={() => setIsMobileMenuOpen(false)} className={getTabClass('manage-students')}>
-                      <Users className="w-5 h-5 text-amber-500" /> Manage Students
+                    <NavLink to="/teacher-dashboard/class-roster" onClick={() => setIsMobileMenuOpen(false)} className={getTabClass('class-roster')}>
+                      <Users className="w-5 h-5 text-amber-500" /> Class Roster
                     </NavLink>
-                    {/* NEW: Split into two separate tabs */}
-                                      <NavLink to="/teacher-dashboard/class-roster" className={getTabClass('class-roster')} onClick={() => setIsMobileMenuOpen(false)}>
-                                        <Users className="w-5 h-5 text-amber-500" /> Class Roster
-                                      </NavLink>
-                                      <NavLink to="/teacher-dashboard/add-student" className={getTabClass('add-student')} onClick={() => setIsMobileMenuOpen(false)}>
-                                        <UserPlus className="w-5 h-5 text-amber-500" /> Add Student
-                                      </NavLink>
+                    <NavLink to="/teacher-dashboard/add-student" onClick={() => setIsMobileMenuOpen(false)} className={getTabClass('add-student')}>
+                      <UserPlus className="w-5 h-5 text-amber-500" /> Add Student
+                    </NavLink>
                     <NavLink to="/teacher-dashboard/class-notices" onClick={() => setIsMobileMenuOpen(false)} className={getTabClass('class-notices')}>
                       <Bell className="w-5 h-5 text-amber-500" /> Class Notices
+                    </NavLink>
+                    <NavLink to="/teacher-dashboard/quizzes" className={getTabClass('quizzes')} onClick={() => setIsMobileMenuOpen(false)}>
+                      <BrainCircuit className="w-5 h-5" /> Quiz Manager
                     </NavLink>
                   </div>
                 </div>

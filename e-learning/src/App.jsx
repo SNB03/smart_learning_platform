@@ -19,6 +19,9 @@ import StudyMaterials from './pages/TeacherDashboard/StudyMaterials';
 import AddStudent from './pages/TeacherDashboard/AddStudent';
 import ClassRoster from './pages/TeacherDashboard/ClassRoster';
 import ClassNotices from './pages/TeacherDashboard/ClassNotices';
+import StudentDashboard from './pages/StudentDashboard/StudentDashboard'
+import QuizManager from './pages/TeacherDashboard/QuizManager';
+import TakeQuiz from './pages/StudentDashboard/TakeQuiz'
 function App() {
   return (
     <Router>
@@ -44,10 +47,12 @@ function App() {
             <Route path="class-roster" element={<ClassRoster />} />
             <Route path="add-student" element={<AddStudent />} />
                    <Route path="class-notices" element={<ClassNotices />} />
+                   <Route path="quizzes" element={<QuizManager />} />
 
 
         </Route>
-
+<Route path="/student-dashboard" element={<StudentDashboard/>}/>
+<Route path="take-quiz" element={<TakeQuiz />} />
       </Routes>
     </Router>
   );

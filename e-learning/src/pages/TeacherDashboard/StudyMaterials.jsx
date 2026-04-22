@@ -331,7 +331,7 @@ const StudyMaterials = () => {
                 {/* Bottom Actions */}
                 <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-100">
                   <span className="text-xs font-semibold text-gray-400">
-                    {material.date} {material.type === 'file' && `• ${material.size}`}
+                    {material.date} {material.type === 'file' && `• ${material.fileSize}`}
                   </span>
 
                   <button

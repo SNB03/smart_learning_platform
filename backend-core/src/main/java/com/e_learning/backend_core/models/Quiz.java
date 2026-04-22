@@ -15,11 +15,25 @@ public class Quiz {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "material_id", nullable = false)
+    @JoinColumn(name = "material_id", nullable = true) // Made nullable in case a quiz is standalone
     private Material material;
 
     @Column(nullable = false)
     private String title;
+
+    // --- NEW FIELDS REQUIRED BY FRONTEND ---
+    @Column(name = "class_level", nullable = false)
+    private Integer classLevel;
+
+    @Column(nullable = false)
+    private String subject;
+
+    @Column(name = "time_limit")
+    private Integer timeLimit; // In minutes
+
+    @Column(name = "due_date")
+    private String dueDate;
+    // ---------------------------------------
 
     @Column(name = "is_ai_generated")
     private Boolean isAiGenerated = false;

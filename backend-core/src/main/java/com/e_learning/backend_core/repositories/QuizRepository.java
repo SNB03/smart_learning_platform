@@ -10,4 +10,5 @@ import java.util.List;
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     List<Quiz> findByMaterialId(Long materialId);
+    List<Quiz> findByClassLevelOrderByCreatedAtDesc(Integer classLevel);
 }
