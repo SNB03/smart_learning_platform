@@ -2,24 +2,26 @@ package com.e_learning.backend_core.controllers;
 
 import com.e_learning.backend_core.models.*;
 import com.e_learning.backend_core.repositories.*;
+import com.e_learning.backend_core.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/admin")
 @CrossOrigin(origins = "http://localhost:5173") // Crucial: Allows React to talk to Spring Boot!
 public class AdminController {
-
+    @Autowired
+    private AdminService adminService; // Inject the new service
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -36,15 +38,6 @@ public class AdminController {
 
     // --- NOTICE ENDPOINTS ---
 
-    @PostMapping("/notices")
-    public Notice publishNotice(@RequestBody Notice notice) {
-        return noticeRepository.save(notice);
-    }
-
-    @GetMapping("/notices")
-    public List<Notice> getRecentNotices() {
-        return noticeRepository.findAll();
-    }
     @GetMapping("/stats")
     public Map<String, Long> getDashboardStats() {
         Map<String, Long> stats = new HashMap<>();
@@ -216,5 +209,116 @@ public class AdminController {
             return ResponseEntity.ok(savedTeacher);
 
         }).orElse(ResponseEntity.notFound().build());
+    }
+
+
+    // GET Student Demographics & Stats (REAL DATA)
+    @GetMapping("/student-stats")
+    public ResponseEntity<?> getStudentStats() {
+        try {
+            // Call the service to crunch the numbers
+            List<Map<String, Object>> stats = adminService.generateStudentDemographics();
+
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    // 1. GET ALL NOTICES (Real DB Query)
+    @GetMapping("/notices")
+    public ResponseEntity<?> getNotices() {
+        try {
+            List<Notice> notices = noticeRepository.findAllByOrderByCreatedAtDesc();
+            List<Map<String, Object>> response = new ArrayList<>();
+
+            for (Notice n : notices) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("id", n.getId());
+                map.put("title", n.getTitle());
+                map.put("content", n.getContent());
+                // Map your DB 'type' or 'classLevel' logic to the UI 'audience' format
+                map.put("audience", "TEACHER_ONLY".equals(n.getType()) ? "TEACHERS" : "ALL");
+                map.put("attachmentName", n.getAttachmentName());
+                map.put("datePublished", n.getCreatedAt() != null ? n.getCreatedAt() : LocalDateTime.now());
+                response.add(map);
+            }
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // 2. POST NEW NOTICE (Saves File to MySQL)
+    @PostMapping(value = "/notices", consumes = "multipart/form-data")
+    public ResponseEntity<?> createNotice(
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam("audience") String audience,
+            @RequestParam(value = "file", required = false) MultipartFile file) {
+        try {
+            Notice notice = new Notice();
+            notice.setTitle(title);
+            notice.setContent(content);
+            notice.setType(audience.equals("TEACHERS") ? "TEACHER_ONLY" : "GENERAL");
+            notice.setClassLevel(0); // 0 means 'All Classes' in this context
+            notice.setDivision("ALL");
+            notice.setCreatedAt(LocalDateTime.now());
+
+            // NOTE: In a real app, you'd fetch the logged-in Admin User entity here
+            User adminUser = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("Admin not found"));
+             notice.setAuthor(adminUser);
+
+            // Handle the File Attachment
+            if (file != null && !file.isEmpty()) {
+                notice.setAttachmentName(file.getOriginalFilename());
+                notice.setAttachmentType(file.getContentType());
+                notice.setAttachmentData(file.getBytes()); // Saves the file payload to LONGBLOB
+            }
+
+            Notice savedNotice = noticeRepository.save(notice);
+
+            // Return mapped response to React
+            Map<String, Object> responseMap = Map.of(
+                    "id", savedNotice.getId(),
+                    "title", savedNotice.getTitle(),
+                    "content", savedNotice.getContent(),
+                    "audience", audience,
+                    "attachmentName", savedNotice.getAttachmentName() == null ? "" : savedNotice.getAttachmentName(),
+                    "datePublished", savedNotice.getCreatedAt()
+            );
+
+            return ResponseEntity.ok(responseMap);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to save notice.");
+        }
+    }
+
+    // 3. GET DOWNLOAD ATTACHMENT
+    @GetMapping("/notices/{id}/download")
+    public ResponseEntity<byte[]> downloadNoticeAttachment(@PathVariable Long id) {
+        try {
+            Notice notice = noticeRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Notice not found"));
+
+            if (notice.getAttachmentData() == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            HttpHeaders headers = new HttpHeaders();
+            // Try to set correct content type, fallback to generic binary stream
+            headers.setContentType(MediaType.parseMediaType(
+                    notice.getAttachmentType() != null ? notice.getAttachmentType() : MediaType.APPLICATION_OCTET_STREAM_VALUE
+            ));
+            headers.setContentDispositionFormData("attachment", notice.getAttachmentName());
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(notice.getAttachmentData());
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

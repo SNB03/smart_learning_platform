@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -252,6 +253,89 @@ public class StudentController {
 
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    // 7. POST Upload Profile Photo
+    @PostMapping("/profile/photo")
+    public ResponseEntity<?> uploadProfilePhoto(
+            @RequestParam("studentId") Long studentId,
+            @RequestParam("photo") MultipartFile photo) {
+        try {
+            // In a real app, you would save this to your database or an S3 bucket:
+            // byte[] photoBytes = photo.getBytes();
+            // studentRepository.updateProfilePhoto(studentId, photoBytes);
+
+            return ResponseEntity.ok(Map.of("message", "Profile photo updated successfully!"));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to upload photo.");
+        }
+    }
+
+    // 8. GET Fetch Student Stats (Attendance & Progress)
+    @GetMapping("/profile/stats")
+    public ResponseEntity<?> getStudentStats(@RequestParam Long studentId) {
+        try {
+            // MOCK RESPONSE: You would normally calculate this from your database tables
+            Map<String, Object> stats = Map.of(
+                    "attendance", Map.of("percentage", 92, "present", 46, "total", 50),
+                    "progress", List.of(
+                            Map.of("subject", "Mathematics", "score", 85, "color", "bg-blue-500"),
+                            Map.of("subject", "Science", "score", 92, "color", "bg-emerald-500"),
+                            Map.of("subject", "English", "score", 78, "color", "bg-purple-500")
+                    )
+            );
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // 9. GET Download Report Card
+    @GetMapping("/profile/report-card/download")
+    public ResponseEntity<byte[]> downloadReportCard(@RequestParam Long studentId) {
+        try {
+            // In a real app, you would generate a PDF here using a library like iText or JasperReports
+            byte[] dummyPdfData = "This is a dummy PDF payload for the Report Card".getBytes();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "Report_Card_" + studentId + ".pdf");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(dummyPdfData);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    // 10. GET Student Achievements
+    @GetMapping("/profile/achievements")
+    public ResponseEntity<?> getStudentAchievements(@RequestParam Long studentId) {
+        try {
+            // In a real app, you query the database for badges earned by this student ID
+            List<Map<String, Object>> achievements = List.of(
+                    Map.of("id", 1, "type", "STREAK", "title", "7-Day Streak", "description", "Logged in for 7 consecutive days!"),
+                    Map.of("id", 2, "type", "TOP_SCORE", "title", "Top Scorer", "description", "Highest score in Science Mid-Term")
+            );
+            return ResponseEntity.ok(achievements);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // 11. GET Student Recent Activity
+    @GetMapping("/profile/activity")
+    public ResponseEntity<?> getStudentActivity(@RequestParam Long studentId) {
+        try {
+            // Query the last 5 actions the student took in the system
+            List<Map<String, Object>> activities = List.of(
+                    Map.of("id", 1, "type", "QUIZ", "action", "Completed Quiz", "target", "Science Mid-Term", "time", "2 hours ago"),
+                    Map.of("id", 2, "type", "VIDEO", "action", "Watched Lecture", "target", "Cell Structure Video", "time", "Yesterday"),
+                    Map.of("id", 3, "type", "DOWNLOAD", "action", "Downloaded", "target", "Algebra Formula Sheet", "time", "2 days ago")
+            );
+            return ResponseEntity.ok(activities);
+        } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
     }

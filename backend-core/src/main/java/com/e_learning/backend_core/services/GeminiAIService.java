@@ -16,8 +16,13 @@ public class GeminiAIService {
     // Add your API key in application.properties: gemini.api.key=YOUR_KEY_HERE
     @Value("${gemini.api.key}")
     private String apiKey;
+    @Value("${gemini.model}")
+    private String geminiModel;
 
-    private final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=";
+    private final String BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/";
+
+    private final String GEMINI_URL= BASE_URL + geminiModel + ":generateContent?key=" + apiKey;
+
 
     public String generateQuizJSON(String topicOrText) {
         RestTemplate restTemplate = new RestTemplate();
