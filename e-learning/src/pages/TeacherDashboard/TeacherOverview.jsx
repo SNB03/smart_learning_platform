@@ -37,7 +37,7 @@ const TeacherOverview = () => {
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/teacher/schedule?teacherId=${user.id}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/teacher/schedule?teacherId=${user.id}`);
         if (response.ok) {
           setSchedule(await response.json());
         }
@@ -69,7 +69,7 @@ const TeacherOverview = () => {
     };
 
     try {
-      const response = await fetch(`http://localhost:8080/api/teacher/schedule?teacherId=${user.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/teacher/schedule?teacherId=${user.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

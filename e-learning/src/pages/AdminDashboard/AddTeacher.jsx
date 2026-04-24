@@ -63,7 +63,7 @@
 //     };
 //
 //     try {
-//       const response = await fetch('http://localhost:8080/api/admin/teachers', {
+//       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/teachers`, {
 //         method: 'POST',
 //         headers: { 'Content-Type': 'application/json' },
 //         body: JSON.stringify(payload)
@@ -96,7 +96,7 @@
 //     formData.append("file", selectedFile);
 //
 //     try {
-//       const response = await fetch('http://localhost:8080/api/admin/teachers/bulk-upload', {
+//       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/teachers/bulk-upload', {
 //         method: 'POST',
 //         body: formData
 //       });
@@ -350,7 +350,7 @@ const AddTeacher = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/api/admin/teachers', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/teachers`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -381,7 +381,7 @@ const AddTeacher = () => {
     formData.append("file", selectedFile);
 
     try {
-      const response = await fetch('http://localhost:8080/api/admin/teachers/bulk-upload', { method: 'POST', body: formData });
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/teachers/bulk-upload`, { method: 'POST', body: formData });
       const resultMessage = await response.text();
       if (response.ok) {
         showToast(resultMessage, 'success');

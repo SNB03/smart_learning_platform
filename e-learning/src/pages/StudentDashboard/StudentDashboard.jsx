@@ -51,10 +51,10 @@ const StudentDashboard = () => {
       try {
         // Fetch all required data simultaneously for speed
         const [scheduleRes, noticesRes, materialsRes] = await Promise.all([
-          fetch(`http://localhost:8080/api/student/schedule?classLevel=${student.classLevel}&division=${student.division}`),
-          fetch(`http://localhost:8080/api/student/notices?classLevel=${student.classLevel}&division=${student.division}`),
-          fetch(`http://localhost:8080/api/student/materials?classLevel=${student.classLevel}`),
-            fetch(`http://localhost:8080/api/student/quizzes?classLevel=${student.classLevel}`)
+          fetch(`${import.meta.env.VITE_API_URL}/api/student/schedule?classLevel=${student.classLevel}&division=${student.division}`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/student/notices?classLevel=${student.classLevel}&division=${student.division}`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/student/materials?classLevel=${student.classLevel}`),
+            fetch(`${import.meta.env.VITE_API_URL}/api/student/quizzes?classLevel=${student.classLevel}`)
         ]);
 
         if (scheduleRes.ok) setSchedule(await scheduleRes.json());

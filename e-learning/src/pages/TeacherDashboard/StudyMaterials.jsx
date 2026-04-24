@@ -45,7 +45,7 @@ const StudyMaterials = () => {
     useEffect(() => {
       const fetchMaterials = async () => {
         try {
-          const response = await fetch('http://localhost:8080/api/teacher/materials');
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/teacher/materials`);
           if (response.ok) {
             const data = await response.json();
             // Format the date strings coming from Spring Boot
@@ -83,7 +83,7 @@ const StudyMaterials = () => {
       }
 
       try {
-        const response = await fetch('http://localhost:8080/api/teacher/materials', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/teacher/materials`, {
           method: 'POST',
           body: formData // Browser automatically sets correct Content-Type for FormData
         });
@@ -114,7 +114,7 @@ const StudyMaterials = () => {
     const handleDelete = async (id) => {
       if (window.confirm("Delete this material? Students will lose access immediately.")) {
         try {
-          const response = await fetch(`http://localhost:8080/api/teacher/materials/${id}`, {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/teacher/materials/${id}`, {
             method: 'DELETE'
           });
 

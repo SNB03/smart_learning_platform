@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:5173") // This allows your future React app to talk to this server safely
+ // This allows your future React app to talk to this server safely
 public class UserController {
 
     @Autowired

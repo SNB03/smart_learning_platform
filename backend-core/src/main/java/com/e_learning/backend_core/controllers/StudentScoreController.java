@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/scores")
-@CrossOrigin(origins = "http://localhost:5173")
+
 public class StudentScoreController {
     @Autowired
     private StudentScoreService service;

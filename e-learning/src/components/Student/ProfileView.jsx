@@ -44,9 +44,9 @@ const ProfileView = ({ student, handleLogout }) => {
     const fetchProfileData = async () => {
       try {
         const [statsRes, achieveRes, activityRes] = await Promise.all([
-          fetch(`http://localhost:8080/api/student/profile/stats?studentId=${student.id || 1}`),
-          fetch(`http://localhost:8080/api/student/profile/achievements?studentId=${student.id || 1}`),
-          fetch(`http://localhost:8080/api/student/profile/activity?studentId=${student.id || 1}`)
+          fetch(`${import.meta.env.VITE_API_URL}/api/student/profile/stats?studentId=${student.id || 1}`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/student/profile/achievements?studentId=${student.id || 1}`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/student/profile/activity?studentId=${student.id || 1}`)
         ]);
 
         if (statsRes.ok) setStats(await statsRes.json());
@@ -70,7 +70,7 @@ const ProfileView = ({ student, handleLogout }) => {
     formData.append('photo', file);
     formData.append('studentId', student.id || 1);
     try {
-      const response = await fetch('http://localhost:8080/api/student/profile/photo', { method: 'POST', body: formData });
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/student/profile/photo`, { method: 'POST', body: formData });
       if (response.ok) {
         const localImageUrl = URL.createObjectURL(file);
         setProfilePhoto(localImageUrl);
@@ -83,7 +83,7 @@ const ProfileView = ({ student, handleLogout }) => {
   const handleDownloadReport = async () => {
     setIsDownloading(true);
     try {
-      const response = await fetch(`http://localhost:8080/api/student/profile/report-card/download?studentId=${student.id || 1}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/student/profile/report-card/download?studentId=${student.id || 1}`);
       if (!response.ok) throw new Error();
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);

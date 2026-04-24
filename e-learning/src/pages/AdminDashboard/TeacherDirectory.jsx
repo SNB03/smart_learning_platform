@@ -37,7 +37,7 @@
 //   useEffect(() => {
 //     const fetchTeachers = async () => {
 //       try {
-//         const response = await fetch('http://localhost:8080/api/admin/teachers');
+//         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/teachers');
 //         if (response.ok) {
 //           const data = await response.json();
 //           setTeachers(data);
@@ -57,7 +57,7 @@
 //   // API Calls - NOW USING TOASTS!
 //   const handleToggleStatus = async (id, currentStatus) => {
 //     try {
-//       const response = await fetch(`http://localhost:8080/api/admin/teachers/${id}/status`, { method: 'PUT' });
+//       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/teachers/${id}/status`, { method: 'PUT' });
 //       if (response.ok) {
 //         const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
 //         setTeachers(teachers.map(teacher =>
@@ -75,7 +75,7 @@
 //   const handleDelete = async (id, name) => {
 //     if (window.confirm(`Are you sure you want to permanently delete ${name}? This cannot be undone.`)) {
 //       try {
-//         const response = await fetch(`http://localhost:8080/api/admin/teachers/${id}`, { method: 'DELETE' });
+//         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/teachers/${id}`, { method: 'DELETE' });
 //         if (response.ok) {
 //           setTeachers(teachers.filter(teacher => teacher.id !== id));
 //           if (selectedTeacher?.id === id) setSelectedTeacher(null);
@@ -401,7 +401,7 @@ const TeacherDirectory = () => {
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/admin/teachers');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/teachers`);
         if (response.ok) {
           const data = await response.json();
           setTeachers(data);
@@ -455,7 +455,7 @@ const TeacherDirectory = () => {
     };
 
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/teachers/${selectedTeacher.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/teachers/${selectedTeacher.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -481,7 +481,7 @@ const TeacherDirectory = () => {
   // Status & Delete Calls
   const handleToggleStatus = async (id, currentStatus) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/teachers/${id}/status`, { method: 'PUT' });
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/teachers/${id}/status`, { method: 'PUT' });
       if (response.ok) {
         const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
         setTeachers(teachers.map(teacher => teacher.id === id ? { ...teacher, status: newStatus } : teacher));
@@ -495,7 +495,7 @@ const TeacherDirectory = () => {
   const handleDelete = async (id, name) => {
     if (window.confirm(`Are you sure you want to permanently delete ${name}?`)) {
       try {
-        const response = await fetch(`http://localhost:8080/api/admin/teachers/${id}`, { method: 'DELETE' });
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/teachers/${id}`, { method: 'DELETE' });
         if (response.ok) {
           setTeachers(teachers.filter(teacher => teacher.id !== id));
           if (selectedTeacher?.id === id) setSelectedTeacher(null);

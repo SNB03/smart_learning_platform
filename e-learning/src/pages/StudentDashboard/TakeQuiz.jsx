@@ -51,7 +51,7 @@ const TakeQuiz = () => {
     try {
       // Send answers to Spring Boot -> Spring Boot checks correct answers ->
       // Sends wrong answers to Gemini AI -> Returns Grade + AI Explanations
-      const response = await fetch('http://localhost:8080/api/student/quizzes/submit', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/student/quizzes/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

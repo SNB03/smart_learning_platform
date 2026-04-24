@@ -31,7 +31,7 @@ const ClassRoster = () => {
     if (!myClass) return;
     const fetchRoster = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/teacher/roster?classLevel=${myClass.classLevel}&division=${myClass.division}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/teacher/roster?classLevel=${myClass.classLevel}&division=${myClass.division}`);
         if (response.ok) setStudents(await response.json());
       } catch (error) {
         // Silently fail for UI preview
@@ -75,7 +75,7 @@ const ClassRoster = () => {
     setViewStudent(null);
     if (window.confirm(`Remove ${name} from the roster?`)) {
       try {
-        const response = await fetch(`http://localhost:8080/api/teacher/students/${id}`, { method: 'DELETE' });
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/teacher/students/${id}`, { method: 'DELETE' });
         if (response.ok) {
           setStudents(students.filter(s => s.id !== id));
           showToast(`${name} removed from class.`, "success");
@@ -89,7 +89,7 @@ const ClassRoster = () => {
   const handleEditSave = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:8080/api/teacher/students/${editingStudent.id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/teacher/students/${editingStudent.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editingStudent)

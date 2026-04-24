@@ -21,7 +21,7 @@ const ClassNotices = () => {
    useEffect(() => {
      const fetchNotices = async () => {
        try {
-         const response = await fetch(`http://localhost:8080/api/teacher/notices?classLevel=${myClass.classLevel}&division=${myClass.division}`);
+         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/teacher/notices?classLevel=${myClass.classLevel}&division=${myClass.division}`);
          if (response.ok) {
            const data = await response.json();
            setNotices(data);
@@ -54,7 +54,7 @@ const ClassNotices = () => {
      }
 
      try {
-       const response = await fetch('http://localhost:8080/api/teacher/notices', {
+       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/teacher/notices`, {
          method: 'POST',
          // Do NOT set Content-Type header manually when using FormData!
          body: formData
@@ -80,7 +80,7 @@ const ClassNotices = () => {
    const handleDelete = async (id) => {
      if (window.confirm("Delete this notice? It will be removed from the students' dashboard.")) {
        try {
-         const response = await fetch(`http://localhost:8080/api/teacher/notices/${id}`, {
+         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/teacher/notices/${id}`, {
            method: 'DELETE'
          });
 

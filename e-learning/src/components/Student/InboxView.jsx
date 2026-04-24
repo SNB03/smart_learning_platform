@@ -8,7 +8,7 @@ const InboxView = ({ notices }) => {
   const handleDownload = async (noticeId, fileName) => {
     setDownloadingId(noticeId);
     try {
-      const response = await fetch(`http://localhost:8080/api/student/notices/${noticeId}/download`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/student/notices/${noticeId}/download`, {
         method: 'GET',
         // If you add Spring Security later, you will pass your JWT token here:
         // headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }

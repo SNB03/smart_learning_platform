@@ -43,7 +43,7 @@ const ManageStudents = () => {
     const fetchStudents = async () => {
       if (!myClass) return;
       try {
-        const response = await fetch(`http://localhost:8080/api/teacher/students?classLevel=${myClass.classLevel}&division=${myClass.division}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/teacher/students?classLevel=${myClass.classLevel}&division=${myClass.division}`);
         if (response.ok) {
           setStudents(await response.json());
         }
@@ -69,7 +69,7 @@ const ManageStudents = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/api/teacher/students', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/teacher/students`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

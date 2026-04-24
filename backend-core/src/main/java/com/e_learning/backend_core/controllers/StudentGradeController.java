@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/grades")
-@CrossOrigin(origins = "http://localhost:5173")
+
 public class StudentGradeController {
     @Autowired
     private StudentGradeService service;

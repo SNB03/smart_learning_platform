@@ -18,7 +18,7 @@ const AdminOverview = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/admin/stats');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/stats`);
         if (response.ok) {
           const data = await response.json();
           setStats({

@@ -18,7 +18,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(origins = "http://localhost:5173") // Crucial: Allows React to talk to Spring Boot!
+
 public class AdminController {
     @Autowired
     private AdminService adminService; // Inject the new service

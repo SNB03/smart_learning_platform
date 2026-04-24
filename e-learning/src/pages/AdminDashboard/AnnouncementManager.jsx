@@ -18,7 +18,7 @@ const AnnouncementManager = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/admin/notices');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/notices`);
         if (response.ok) {
           const data = await response.json();
           const formattedHistory = data.map(item => ({
@@ -56,7 +56,7 @@ const AnnouncementManager = () => {
     try {
       // NOTE: Do NOT set 'Content-Type' when sending FormData.
       // The browser sets it automatically with the correct boundary!
-      const response = await fetch('http://localhost:8080/api/admin/notices', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/notices`, {
         method: 'POST',
         body: formData
       });
@@ -89,7 +89,7 @@ const AnnouncementManager = () => {
 // --- REAL FILE DOWNLOAD LOGIC ---
   const handleDownloadAttachment = async (noticeId, fileName) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/admin/notices/${noticeId}/download`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/notices/${noticeId}/download`);
       if (!response.ok) throw new Error("Failed to download");
 
       const blob = await response.blob();
